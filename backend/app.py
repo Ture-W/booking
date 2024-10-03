@@ -5,6 +5,7 @@ import requests as rq
 import time as t
 import urllib
 
+
 app = Flask(__name__)
 CORS(app, origins=['https://ture-w.github.io'])
 
