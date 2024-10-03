@@ -42,7 +42,7 @@ async function getToken(hhUsername, hhPassword) {
       url: url,
       method: 'POST',
       headers: headers,
-      data: params
+      json: params
     });
 
     if (response.error) {
@@ -77,7 +77,7 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
       url: url,
       method: 'POST',
       headers: headers,
-      data: params
+      json: params
     });
 
     return response

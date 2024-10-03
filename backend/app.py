@@ -22,7 +22,7 @@ def get_token():
       s.get(url)
 
       url = "https://idp.hh.se/idp/profile/SAML2/Redirect/SSO?execution=e1s1"
-      headers={
+      headers = {
         'Content-type':'application/json,application/x-www-form-urlencoded',
         'Accept':'application/json'
       }
@@ -56,7 +56,7 @@ def get_token():
 
 def book_room(poi_id: int, booking_start: time, duration: timedelta, token: str) -> dict:
   url = "https://booking.mazemap.com/api/roombooking/bookroom/"
-  headers={
+  headers = {
     'Content-type':'application/json',
     'Accept':'application/json'
   }
@@ -103,4 +103,4 @@ def test():
 
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=5000)
+  app.run(host='0.0.0.0', port=10000)
