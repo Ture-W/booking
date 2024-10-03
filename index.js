@@ -15,8 +15,8 @@ async function getPoi(name) {
     const response = await $.ajax({
       url: url,
       method: 'GET',
-      headers: headers,
-      data: params
+      headers: JSON.stringify(headers),
+      body: JSON.stringify(params)
     });
     return response.result[0].poiId;
 
@@ -41,8 +41,8 @@ async function getToken(hhUsername, hhPassword) {
     const response = await $.ajax({
       url: url,
       method: 'POST',
-      headers: headers,
-      json: params
+      headers: JSON.stringify(headers),
+      body: JSON.stringify(params)
     });
 
     if (response.error) {
@@ -76,8 +76,8 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
     const response = await $.ajax({
       url: url,
       method: 'POST',
-      headers: headers,
-      json: params
+      headers: JSON.stringify(headers),
+      body: JSON.stringify(params)
     });
 
     return response
