@@ -15,8 +15,8 @@ async function getPoi(name) {
     const response = await $.ajax({
       url: url,
       method: 'GET',
-      headers: JSON.stringify(headers),
-      body: JSON.stringify(params)
+      headers: headers,
+      data: params
     });
     return response.result[0].poiId;
 
