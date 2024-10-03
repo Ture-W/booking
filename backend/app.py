@@ -60,9 +60,9 @@ def book_room(poi_id: int, booking_start: time, duration: timedelta, token: str)
     'Content-type':'application/json',
     'Accept':'application/json'
   }
-  booking_time = datetime.combine(datetime.now().date(), booking_start) - timedelta(hours=2)
-  start = booking_time.isoformat()+".000Z"
-  end = (booking_time+duration).isoformat()+".000Z"
+  booking_time = datetime.combine(datetime.now().date(), booking_start)
+  start = booking_time.isoformat()[:-3]+"Z"
+  end = (booking_time+duration).isoformat()[:-3]+"Z"
   payload = {
     "poiid": poi_id,
     "token": token,
@@ -97,7 +97,7 @@ def time_booking():
 @app.route('/proxy/test', methods=['POST'])
 def test():
   json = {
-    "time": datetime.now().isoformat()+".000Z"
+    "time": datetime.now().isoformat()[:-3]+"Z"
   }
   return jsonify(json)
 
