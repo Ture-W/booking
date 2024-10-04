@@ -1,0 +1,105 @@
+body {
+  font-family: Arial, sans-serif;
+  font-size: 1.2em;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+@media only screen and (max-width: 412px) {
+  body {
+    font-size: 1em;
+  }
+}
+
+#title {
+  font-size: 3em;
+}
+#booking-form {
+  border: 1px solid #dbdbdb;
+  border-radius: 25px;
+  padding: 25px;
+  max-width: 800px;
+}
+.input-container {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 50px 40px 50px;
+}
+#credentials-input {
+  background-color: #b5eaff;
+  border: 2px solid #98e2ff;
+  border-radius: 40px;
+}
+#credentials-info {
+  margin: 0;
+  font-size: 0.8em;
+  color: rgb(66, 66, 66);
+}
+#booking-input {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+input {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+.text-input {
+  width: 100%;
+}
+.input-field {
+  height: 1.3em;
+  font-size: 1.2em;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding-left: 5px;
+}
+#book-room {
+  width: 30%;
+  height: 50px;
+  font-size: 1em;
+  color: white;
+  margin-left: 50px;
+  background-color: #209fd1;
+  border: 2px solid #15779e;
+  border-radius: 25px;
+  cursor: pointer;
+}
+.duration-radio {
+  display: flex;
+  flex-wrap: wrap;
+}
+input[type="radio"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  margin-right: 20px;
+
+  box-sizing: border-box;
+  height: 3.5em;
+  color: black;
+  border: 1px solid black;
+  border-radius: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8em;
+  cursor: pointer;
+  text-wrap: nowrap;
+}
+input:checked {
+  border-color: #15779e;
+  color: white;
+  background-color: #209fd1;
+}
+input[type="radio"]::after { margin: auto 10px auto 10px; }
+input[value="30"]::after { content: "30 minuter"; }
+input[value="60"]::after { content: "1 timme"; }
+input[value="80"]::after { content: "1 timme 30 minuter"; }
+input[value="120"]::after { content: "2 timmar"; }
+input[value="180"]::after { content: "3 timmar"; }

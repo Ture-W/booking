@@ -4,32 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <script
-  src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h2>Room Booking</h2>
-  <form id="bookingForm">
-    <label for="room_name">Room Name:</label>
-    <input type="text" id="room_name" value="s1016"><br><br>
+  <h2 id="title">Boka snabbt</h2>
+  <div id="content">
+    <form id="booking-form">
+      <div class="input-container" id="credentials-input">
+        <label for="hh-username">HH Användarnamn:</label><br>
+        <input class="text-input input-field" type="text" id="hh-username" placeholder="föreft23@student.hh.se" required><br>
+        <label for="hh-password">HH Lösenord:</label><br>
+        <input class="text-input input-field" type="password" id="hh-password" placeholder="lösenord" required>
+        <p id="credentials-info">* DENNA GITHUB SIDAN ÄR OPEN SOURCE. Du kan läsa källkoden <a href="https://github.com/Ture-W/booking">här</a> för att se 
+          exakt vad som händer med inloggningsuppgifterna. Använd ändå bara denna sidan om du litar på mig. 
+          Alternativt kan du köra python filen själv, den finns bland källkoden.</p>
+      </div>
+      <div class="input-container" id="booking-input">
+        <label for="room-name">Namn på rummet:</label><br>
+        <input class="text-input input-field" type="text" id="room-name" placeholder="s1016" required><br>
 
-    <label for="start_hour">Booking Start Time (Hour):</label>
-    <input type="number" id="start_hour" value="12" min="0" max="23"><br><br>
+        <label for="start-hour">Tid att boka (timme:minut):</label>
+        <div id="time-input">
+          <input class="input-field" type="number" id="start-hour" placeholder="13" min="0" max="23" required>
+          <span>:</span>
+          <input class="input-field" type="number" id="start-minute" placeholder="0" min="0" max="59" required>
+        </div>
 
-    <label for="start_minute">Booking Start Time (Minute):</label>
-    <input type="number" id="start_minute" value="15" min="0" max="59"><br><br>
-
-    <label for="duration">Duration (Hours):</label>
-    <input type="number" id="duration" value="2" min="0"><br><br>
-
-    <label for="hh_username">HH Username:</label>
-    <input type="text" id="hh_username" value="name"><br><br>
-
-    <label for="hh_password">HH Password:</label>
-    <input type="password" id="hh_password" value="pass"><br><br>
-
-    <button type="button" id="bookRoom">Book Room</button>
-  </form>
+        <label>Tidslängd:</label><br>
+        <div class="duration-radio">
+          <input type="radio" name="duration" value="30">
+          <input type="radio" name="duration" value="60">
+          <input type="radio" name="duration" value="80">
+          <input type="radio" name="duration" value="120" checked>
+          <input type="radio" name="duration" value="180">
+        </div>
+      </div>
+      <button type="submit" id="book-room">Boka</button>
+    </form>
+  </div>
 
   <p id="output"></p>
 
@@ -53,12 +66,12 @@
     }
 
     async function bookRoomProcess() {
-      const roomName = $('#room_name').val();
-      const startHour = parseInt($('#start_hour').val());
-      const startMinute = parseInt($('#start_minute').val());
-      const duration = parseInt($('#duration').val());
-      const hhUsername = $('#hh_username').val();
-      const hhPassword = $('#hh_password').val();
+      const roomName = $('#room-name').val();
+      const startHour = parseInt($('#start-hour').val());
+      const startMinute = parseInt($('#start-minute').val());
+      const duration = $('input[name="duration"]:checked').val();
+      const hhUsername = $('#hh-username').val();
+      const hhPassword = $('#hh-password').val();
 
       await waitUntil(5, 52);
 
@@ -89,8 +102,24 @@
 
     }
 
-    $('#bookRoom').on('click', function() {
-      bookRoomProcess();
+    $(document).ready(function() {
+
+      $('#start-hour').on('input', function() {
+        if ($(this).val().length == 2) {
+          $('#start-minute').focus();
+        }
+      });
+      $('#start-minute').on('input', function() {
+        if ($(this).val().length == 0) {
+          $('#start-hour').focus();
+        }
+      });
+
+      $('#booking-form').on('submit', function(event) {
+        event.preventDefault()
+        bookRoomProcess();
+      });
+
     });
 
   </script>

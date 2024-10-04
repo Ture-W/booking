@@ -60,7 +60,7 @@ def book_room(poi_id: int, booking_start: time, duration: timedelta, token: str)
     'Content-type':'application/json',
     'Accept':'application/json'
   }
-  booking_time = datetime.combine(datetime.now().date(), booking_start)
+  booking_time = datetime.combine(datetime.now().date(), booking_start) - timedelta(hours=2) #-2 timmar för timezone offset
   start = booking_time.isoformat()[:-3]+"Z"
   end = (booking_time+duration).isoformat()[:-3]+"Z"
   payload = {
@@ -87,7 +87,9 @@ def time_booking():
     duration = data.get('duration')
     token = data.get('token')
 
-    while datetime.now().time().hour < 6: t.sleep(0.01)
+    while datetime.now().time().hour < 6:
+      #t.sleep(0.01)
+      pass
 
     return jsonify(book_room(poi_id, time(start_hour, start_minute), timedelta(minutes=duration), token))
   

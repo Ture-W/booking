@@ -41,12 +41,12 @@ async function getToken(hhUsername, hhPassword) {
     const response = await $.ajax({
       url: url,
       method: 'POST',
-      headers: JSON.stringify(headers),
-      body: JSON.stringify(params)
+      headers: headers,
+      data: JSON.stringify(params)
     });
 
     if (response.error) {
-      console.error('Fel uppstod i getToken:', error);
+      console.error('Fel uppstod i getToken:', response.error);
       return null;
     }
     return response.token
@@ -76,8 +76,8 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
     const response = await $.ajax({
       url: url,
       method: 'POST',
-      headers: JSON.stringify(headers),
-      body: JSON.stringify(params)
+      headers: headers,
+      data: JSON.stringify(params)
     });
 
     return response
@@ -91,10 +91,9 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
 function parseBookingError(errorText) {
   switch (errorText) {
     case "busy":
-      return "Rummet är redan bokat under en tid som krockar med din önskade tid";
+      return "Rummet är redan bokat under en tid som krockar med din önskade tid.";
     case "not_allowed_interval":
-      return "Den valda perioden är inte tillåten för detta rummet eller din önskade tid är inte en intervall av tillåtna perioder för bokning." +
-      " Detta felet kan också hända om din valda tid redan passerat eller om bokningen försöktes under en otillåten tid (t.ex. innan kl 08:00).";
+      return "Den valda tid för bokningen eller tidlängden är inte tillåten för detta rummet.";
     case "time_quota_exceeded":
       return "Du har redan ett eller flera bokade rum för totalt 2 timmar.";
     default:
