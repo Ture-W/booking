@@ -10,12 +10,12 @@
 </head>
 <body>
   <h2 id="title">Boka snabbt</h2>
-  <form id="booking-form">
+  <form id="booking-form"  autocomplete="on">
     <div class="input-container" id="credentials-input">
       <label for="hh-username">HH Användarnamn:</label><br>
-      <input class="text-input input-field" type="text" id="hh-username" placeholder="föreft23@student.hh.se" required><br>
+      <input class="text-input input-field" type="text" id="hh-username" placeholder="föreft23@student.hh.se" required autocomplete="username"><br>
       <label for="hh-password">HH Lösenord:</label><br>
-      <input class="text-input input-field" type="password" id="hh-password" placeholder="lösenord" required>
+      <input class="text-input input-field" type="password" id="hh-password" placeholder="lösenord" required  autocomplete="current-password">
       <p id="credentials-info">* DENNA GITHUB SIDAN ÄR OPEN SOURCE. Du kan läsa källkoden <a href="https://github.com/Ture-W/booking">här</a> för att se 
         exakt vad som händer med inloggningsuppgifterna (de sparas inte). Använd ändå bara denna sidan om du har tillit till mig. 
         Alternativt kan du själv köra en python fil som bokar på samma sätt (finns bland källkoden).</p>
@@ -65,6 +65,14 @@
       $('#status').html('Väntar tills kl. 08:00');
       $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte ner fliken`);
 
+      $('#status').html('Hittar rummet');
+      const poiId = await getPoi(roomName);
+      if (!poiId) {
+        $('#status').html('Något gick fel');
+        $('#comment').html('Kunde inte hitta rummet <b>"'+roomName+'"</b>.');
+        return;
+      }
+
       const now = new Date();
       if (now.getUTCHours() >= 6) {
         // Sov till nästa dag
@@ -73,14 +81,6 @@
       }
       
       await waitUntil(5, 52);
-
-      $('#status').html('Hittar rummet');
-      const poiId = await getPoi(roomName);
-      if (!poiId) {
-        $('#status').html('Något gick fel');
-        $('#comment').html('Kunde inte hitta rummet <b>"'+roomName+'"</b>.');
-        return;
-      }
       
       // Detta väcker upp Render web servicen, tidigast 8 minuter innan bokning för bra marginal
       // Den "somnar" om den inte får requests ofta, det kan ta 50+ sekunder att väcka den
