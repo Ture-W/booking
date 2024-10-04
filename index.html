@@ -3,101 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Boka snabbt</title>
   <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <h2 id="title">Boka snabbt</h2>
-  <div id="content">
-    <form id="booking-form">
-      <div class="input-container" id="credentials-input">
-        <label for="hh-username">HH Användarnamn:</label><br>
-        <input class="text-input input-field" type="text" id="hh-username" placeholder="föreft23@student.hh.se" required><br>
-        <label for="hh-password">HH Lösenord:</label><br>
-        <input class="text-input input-field" type="password" id="hh-password" placeholder="lösenord" required>
-        <p id="credentials-info">* DENNA GITHUB SIDAN ÄR OPEN SOURCE. Du kan läsa källkoden <a href="https://github.com/Ture-W/booking">här</a> för att se 
-          exakt vad som händer med inloggningsuppgifterna. Använd ändå bara denna sidan om du litar på mig. 
-          Alternativt kan du köra python filen själv, den finns bland källkoden.</p>
-      </div>
-      <div class="input-container" id="booking-input">
-        <label for="room-name">Namn på rummet:</label><br>
-        <input class="text-input input-field" type="text" id="room-name" placeholder="s1016" required><br>
+  <form id="booking-form">
+    <div class="input-container" id="credentials-input">
+      <label for="hh-username">HH Användarnamn:</label><br>
+      <input class="text-input input-field" type="text" id="hh-username" placeholder="föreft23@student.hh.se" required><br>
+      <label for="hh-password">HH Lösenord:</label><br>
+      <input class="text-input input-field" type="password" id="hh-password" placeholder="lösenord" required>
+      <p id="credentials-info">* DENNA GITHUB SIDAN ÄR OPEN SOURCE. Du kan läsa källkoden <a href="https://github.com/Ture-W/booking">här</a> för att se 
+        exakt vad som händer med inloggningsuppgifterna (de sparas inte). Använd ändå bara denna sidan om du har tillit till mig. 
+        Alternativt kan du själv köra en python fil som bokar på samma sätt (finns bland källkoden).</p>
+    </div>
+    <div class="input-container" id="booking-input">
+      <label for="room-name">Namn på rummet:</label><br>
+      <input class="text-input input-field" type="text" id="room-name" placeholder="s1016" required><br>
 
-        <label for="start-hour">Tid att boka (timme:minut):</label>
-        <div id="time-input">
-          <input class="input-field" type="number" id="start-hour" placeholder="13" min="0" max="23" required>
-          <span>:</span>
-          <input class="input-field" type="number" id="start-minute" placeholder="0" min="0" max="59" required>
-        </div>
-
-        <label>Tidslängd:</label><br>
-        <div class="duration-radio">
-          <input type="radio" name="duration" value="30">
-          <input type="radio" name="duration" value="60">
-          <input type="radio" name="duration" value="80">
-          <input type="radio" name="duration" value="120" checked>
-          <input type="radio" name="duration" value="180">
-        </div>
+      <label for="start-hour">Tid att boka (timme:minut):</label>
+      <div id="time-input">
+        <input class="input-field" type="number" id="start-hour" placeholder="13" min="0" max="23" required>
+        <span>:</span>
+        <input class="input-field" type="number" id="start-minute" placeholder="0" min="0" max="59" required>
       </div>
-      <button type="submit" id="book-room">Boka</button>
-    </form>
+
+      <label>Tidslängd:</label><br>
+      <div class="duration-radio">
+        <input type="radio" name="duration" value="30">
+        <input type="radio" name="duration" value="60">
+        <input type="radio" name="duration" value="80">
+        <input type="radio" name="duration" value="120" checked>
+        <input type="radio" name="duration" value="180">
+      </div>
+    </div>
+    <button type="submit" id="book-room">Boka</button>
+  </form>
+
+  <div id="output-content" class="hide">
+    <div id="output-container">
+      <i id="status-icon" class="fa-solid fa-spinner fa-spin"></i><br>
+      <h2 id="status">Väntar tills kl. 08:00</h2>
+      <p id="comment">Stäng inte ner fliken</p>
+    </div>
   </div>
-
-  <p id="output"></p>
 
   <script src="./index.js"></script>
   <script>
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function waitUntil(hour, minute, second = 0) {
-      while (true) {
-        const now = new Date();
-        const currentHour = now.getUTCHours();
-        const currentMinute = now.getUTCMinutes();
-        const currentSecond = now.getUTCSeconds();
-        if (currentHour > hour || (currentHour === hour && currentMinute > minute) || (currentHour === hour && currentMinute === minute && currentSecond >= second)) {
-          break;
-        }
-        await sleep(30000);
-      }
-    }
 
     async function bookRoomProcess() {
-      const roomName = $('#room-name').val();
+      const roomName = $('#room-name').val().toUpperCase();
       const startHour = parseInt($('#start-hour').val());
       const startMinute = parseInt($('#start-minute').val());
       const duration = $('input[name="duration"]:checked').val();
       const hhUsername = $('#hh-username').val();
       const hhPassword = $('#hh-password').val();
 
+      $('#status').html('Väntar tills kl. 08:00');
+      $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte ner fliken`);
+
+      const now = new Date();
+      if (now.getUTCHours() >= 6) {
+        // Sov till nästa dag
+        await waitUntil(23, 59, 40);
+        await sleep(22000)
+      }
+      
       await waitUntil(5, 52);
 
+      $('#status').html('Hittar rummet');
       const poiId = await getPoi(roomName);
       if (!poiId) {
-        $('#output').text('Kunde inte hitta rummet "'+roomName+'".');
+        $('#status').html('Något gick fel');
+        $('#comment').html('Kunde inte hitta rummet <b>"'+roomName+'"</b>.');
         return;
       }
-
+      
       // Detta väcker upp Render web servicen, tidigast 8 minuter innan bokning för bra marginal
+      // Den "somnar" om den inte får requests ofta, det kan ta 50+ sekunder att väcka den
+      $('#status').html('Hämtar access token');
       const token = await getToken(hhUsername, hhPassword);
       if (!token) {
-        $('#output').text("Fell uppstod under verifiering av inloggningsuppgifter. Kontrollera HH inloggningsuppgifterna.");
+        $('#status').html('Något gick fel');
+        $('#comment').html('Fell uppstod under verifiering av inloggningsuppgifter. Kontrollera HH inloggningsuppgifterna.');
         return;
       }
 
+      $('#status').html('Väntar tills kl. 08:00');
+      $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte ner fliken`);
+      
       // Säger till backend att boka några sekunder tidigt för att bokningen ska ske så nära kl 08:00 som möjligt
       await waitUntil(5, 59, 55);
+      
+      $('#status').html('Bokar rummet');
+      $('#comment').html('Nu är det för sent för att avbryta processen');
 
       const booking = await bookRoom(poiId, startHour, startMinute, duration, token);
 
       if (booking.success) {
-        $('#output').text("Lyckades boka rummet!");
+        $('#status-icon').attr('class', 'fa-solid fa-check');
+        $('#status').html('Rummet blev bokat');
+        $('#comment').html(`Bokningsförfrågan skickades ca. <b>${booking.timeMicSec} mikrosekunder</b> efter kl. 08:00.<br>(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)`);
       } else {
         const errorMessage = parseBookingError(booking.error);
-        $('#output').html(`Fel uppstod: "${booking.error}"<br><br>${errorMessage}`);
+        $('#status-icon').attr('class', 'fa-solid fa-xmark');
+        $('#status').html('Rummet blev inte bokat');
+        $('#comment').html("Fel uppstod: " + errorMessage);
+        console.log("Fel uppstod:", booking.error);
       }
 
     }
@@ -117,6 +132,8 @@
 
       $('#booking-form').on('submit', function(event) {
         event.preventDefault()
+        $(this).toggleClass('hide');
+        $('#output-content').toggleClass('hide');
         bookRoomProcess();
       });
 

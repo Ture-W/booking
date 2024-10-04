@@ -54,32 +54,13 @@ def get_token():
   except Exception as e:
     return jsonify({"error": str(e)})
 
-def book_room(poi_id: int, booking_start: time, duration: timedelta, token: str) -> dict:
-  url = "https://booking.mazemap.com/api/roombooking/bookroom/"
-  headers = {
-    'Content-type':'application/json',
-    'Accept':'application/json'
-  }
-  booking_time = datetime.combine(datetime.now().date(), booking_start) - timedelta(hours=2) #-2 timmar för timezone offset
-  start = booking_time.isoformat()[:-3]+"Z"
-  end = (booking_time+duration).isoformat()[:-3]+"Z"
-  payload = {
-    "poiid": poi_id,
-    "token": token,
-    "start": start,
-    "end": end,
-    "provider": "time_edit"
-  }
-  response = rq.post(url, json=payload, headers=headers)
-
-  try:
-    return response.json()
-  except:
-    return {"error": response.text, "success": False}
-
 @app.route('/proxy/book', methods=['POST'])
 def time_booking():
   try:
+    now = datetime.now().time()
+    if now.hour != 5 or now.minute < 59:
+      return jsonify({"error": "Bokar bara klockan 08:00", "success": False})
+    
     data = request.get_json()
     poi_id = data.get('poiId')
     start_hour = data.get('startHour')
@@ -87,11 +68,35 @@ def time_booking():
     duration = data.get('duration')
     token = data.get('token')
 
+    url = "https://booking.mazemap.com/api/roombooking/bookroom/"
+    headers = {
+      'Content-type':'application/json',
+      'Accept':'application/json'
+    }
+    booking_time = datetime.combine(datetime.now().date(), time(start_hour, start_minute)) - timedelta(hours=2) #-2 timmar för timezone offset
+    start = booking_time.isoformat()[:-3]+"Z"
+    end = (booking_time+timedelta(minutes=duration)).isoformat()[:-3]+"Z"
+    payload = {
+      "poiid": poi_id,
+      "token": token,
+      "start": start,
+      "end": end,
+      "provider": "time_edit"
+    }
+
     while datetime.now().time().hour < 6:
       #t.sleep(0.01)
       pass
 
-    return jsonify(book_room(poi_id, time(start_hour, start_minute), timedelta(minutes=duration), token))
+    send_time = datetime.now()
+    response = rq.post(url, json=payload, headers=headers)
+
+    try:
+      return_json = response.json()
+      return_json["timeMicSec"] = send_time.time().microsecond
+      return jsonify(return_json)
+    except:
+      return jsonify({"error": response.text, "success": False})
   
   except Exception as e:
     return jsonify({"error": str(e), "success": False})

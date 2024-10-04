@@ -1,3 +1,19 @@
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitUntil(hour, minute, second = 0) {
+  while (true) {
+    const now = new Date();
+    const currentHour = now.getUTCHours();
+    const currentMinute = now.getUTCMinutes();
+    const currentSecond = now.getUTCSeconds();
+    if (currentHour > hour || (currentHour === hour && currentMinute > minute) || (currentHour === hour && currentMinute === minute && currentSecond >= second)) {
+      break;
+    }
+    await sleep(20000);
+  }
+}
 
 async function getPoi(name) {
   const url = "https://search.mazemap.com/search/equery/";

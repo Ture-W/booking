@@ -20,10 +20,8 @@ body {
   font-size: 3em;
 }
 #booking-form {
-  border: 1px solid #dbdbdb;
-  border-radius: 25px;
-  padding: 25px;
-  max-width: 800px;
+  max-width: 750px;
+  margin-bottom: 50px;
 }
 .input-container {
   flex-direction: column;
@@ -45,10 +43,6 @@ body {
   padding-top: 30px;
   padding-bottom: 30px;
 }
-input {
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
 .text-input {
   width: 100%;
 }
@@ -58,6 +52,8 @@ input {
   border: 1px solid black;
   border-radius: 5px;
   padding-left: 5px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 #book-room {
   width: 30%;
@@ -78,9 +74,7 @@ input[type="radio"] {
   -webkit-appearance: none;
   appearance: none;
   background-color: #fff;
-  margin-right: 20px;
 
-  box-sizing: border-box;
   height: 3.5em;
   color: black;
   border: 1px solid black;
@@ -91,6 +85,7 @@ input[type="radio"] {
   font-size: 0.8em;
   cursor: pointer;
   text-wrap: nowrap;
+  margin: 10px 0 0 10px;
 }
 input:checked {
   border-color: #15779e;
@@ -103,3 +98,34 @@ input[value="60"]::after { content: "1 timme"; }
 input[value="80"]::after { content: "1 timme 30 minuter"; }
 input[value="120"]::after { content: "2 timmar"; }
 input[value="180"]::after { content: "3 timmar"; }
+
+
+#output-content {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#output-container {
+  width: 350px;
+  min-height: 400px;
+  border: 2px solid #dbdbdb;
+  border-radius: 25px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 50px;
+}
+i {
+  margin-top: 30px;
+  font-size: 150px;
+  width: fit-content;
+}
+
+.hide {
+  visibility: hidden;
+  position: absolute;
+}
