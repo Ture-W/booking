@@ -15,4 +15,5 @@ ANVÄND INTE SIDAN OM DU ÄR RÄDD ATT JAG BEDRAR DIG
 
 
 tidlängderna är de tidlängder som finns att välja mellan på mazemap men jag har inte sett ett rum där 3 timamr faktiskt fungerar. tiden måste också vara en intervall av 15 minuter tror jag. Om du skriver in ogiltiga uppgifter i formuläret innan du klickar boka, kommer bokningen att misslyckas klockan 8
+
 https://ture-w.github.io/booking/
