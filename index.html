@@ -47,7 +47,7 @@
     <div id="output-container">
       <i id="status-icon" class="fa-solid fa-spinner fa-spin"></i><br>
       <h2 id="status">Väntar tills kl. 08:00</h2>
-      <p id="comment">Stäng inte ner fliken</p>
+      <p id="comment">Stäng inte fliken</p>
     </div>
   </div>
 
@@ -55,23 +55,26 @@
   <script>
 
     async function bookRoomProcess() {
-      const roomName = $('#room-name').val().toUpperCase();
+      let roomName = $('#room-name').val().toUpperCase();
       const startHour = parseInt($('#start-hour').val());
       const startMinute = parseInt($('#start-minute').val());
       const duration = $('input[name="duration"]:checked').val();
       const hhUsername = $('#hh-username').val();
       const hhPassword = $('#hh-password').val();
 
-      $('#status').html('Väntar tills kl. 08:00');
-      $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte ner fliken`);
-
-      $('#status').html('Hittar rummet');
-      const poiId = await getPoi(roomName);
-      if (!poiId) {
+      $('#status').html('Söker efter rummet');
+      const poiSearch = await getPoi(roomName);
+      if (!poiSearch) {
+        $('#status-icon').attr('class', 'fa-solid fa-xmark red');
         $('#status').html('Något gick fel');
         $('#comment').html('Kunde inte hitta rummet <b>"'+roomName+'"</b>.');
         return;
       }
+      roomName = poiSearch[0]
+      const poiId = poiSearch[1];
+
+      $('#status').html('Väntar tills kl. 08:00');
+      $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte fliken`);
 
       const now = new Date();
       if (now.getUTCHours() >= 6) {
@@ -87,13 +90,14 @@
       $('#status').html('Hämtar access token');
       const token = await getToken(hhUsername, hhPassword);
       if (!token) {
+        $('#status-icon').attr('class', 'fa-solid fa-xmark red');
         $('#status').html('Något gick fel');
         $('#comment').html('Fell uppstod under verifiering av inloggningsuppgifter. Kontrollera HH inloggningsuppgifterna.');
         return;
       }
 
       $('#status').html('Väntar tills kl. 08:00');
-      $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte ner fliken`);
+      $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte fliken`);
       
       // Säger till backend att boka några sekunder tidigt för att bokningen ska ske så nära kl 08:00 som möjligt
       await waitUntil(5, 59, 55);
@@ -104,12 +108,12 @@
       const booking = await bookRoom(poiId, startHour, startMinute, duration, token);
 
       if (booking.success) {
-        $('#status-icon').attr('class', 'fa-solid fa-check');
+        $('#status-icon').attr('class', 'fa-solid fa-check green');
         $('#status').html('Rummet blev bokat');
         $('#comment').html(`Bokningsförfrågan skickades ca. <b>${booking.timeMicSec} mikrosekunder</b> efter kl. 08:00.<br>(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)`);
       } else {
         const errorMessage = parseBookingError(booking.error);
-        $('#status-icon').attr('class', 'fa-solid fa-xmark');
+        $('#status-icon').attr('class', 'fa-solid fa-xmark red');
         $('#status').html('Rummet blev inte bokat');
         $('#comment').html("Fel uppstod: " + errorMessage);
         console.log("Fel uppstod:", booking.error);

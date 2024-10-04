@@ -129,3 +129,9 @@ i {
   visibility: hidden;
   position: absolute;
 }
+.red {
+  color: red;
+}
+.green {
+  color: green;
+}

@@ -34,7 +34,7 @@ async function getPoi(name) {
       headers: headers,
       data: params
     });
-    return response.result[0].poiId;
+    return [response.result[0].poiNames[0], response.result[0].poiId];
 
   } catch (error) {
     console.error('Fel uppstod i getPoi:', error);
