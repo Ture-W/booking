@@ -57,7 +57,7 @@ def get_token():
 @app.route('/proxy/book', methods=['POST'])
 def time_booking():
   try:
-    now = datetime.now().time()
+    #now = datetime.now().time()
     #if now.hour != 5 or now.minute < 59:
     #  return jsonify({"error": "Bokar bara klockan 08:00", "success": False})
     

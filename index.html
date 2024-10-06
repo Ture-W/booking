@@ -79,11 +79,11 @@
       const now = new Date();
       if (now.getUTCHours() >= 6) {
         // Sov till nästa dag
-        await waitUntil(23, 59, 40);
-        await sleep(22000)
+      //  await waitUntil(23, 59, 40);
+      //  await sleep(25000)
       }
       
-      await waitUntil(5, 52);
+      //await waitUntil(5, 52);
       
       // Detta väcker upp Render web servicen, tidigast 8 minuter innan bokning för bra marginal
       // Den "somnar" om den inte får requests ofta, det kan ta 50+ sekunder att väcka den
@@ -100,7 +100,7 @@
       $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte fliken`);
       
       // Säger till backend att boka några sekunder tidigt för att bokningen ska ske så nära kl 08:00 som möjligt
-      await waitUntil(5, 59, 55);
+      //await waitUntil(5, 59, 55);
       
       $('#status').html('Bokar rummet');
       $('#comment').html('Nu är det för sent för att avbryta processen');
