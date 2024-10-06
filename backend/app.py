@@ -57,9 +57,9 @@ def get_token():
 @app.route('/proxy/book', methods=['POST'])
 def time_booking():
   try:
-    #now = datetime.now().time()
-    #if now.hour != 5 or now.minute < 59:
-    #  return jsonify({"error": "Bokar bara klockan 08:00", "success": False})
+    now = datetime.now().time()
+    if now.hour != 5 or now.minute < 59:
+      return jsonify({"error": "Bokar bara klockan 08:00", "success": False})
     
     data = request.get_json()
     poi_id = data.get('poiId')
@@ -84,16 +84,16 @@ def time_booking():
       "provider": "time_edit"
     }
 
-    #while datetime.now().time().hour < 6:
-      #t.sleep(0.01)
-    #  pass
+    while datetime.now().time().hour < 6:
+      t.sleep(0.01)
+      pass
 
     send_time = datetime.now()
     response = rq.post(url, json=payload, headers=headers)
 
     try:
       return_json = response.json()
-      return_json["timeMicSec"] = send_time.time().microsecond
+      return_json["timeMicSec"] = send_time.time().microsecond # Exakt sålänge det skickas inom 1 sekund
       return jsonify(return_json)
     except:
       return jsonify({"error": response.text, "success": False})
