@@ -85,7 +85,7 @@ def time_booking():
     }
 
     while datetime.now().time().hour < 6:
-      t.sleep(0.01)
+      #t.sleep(0.01)
       pass
 
     send_time = datetime.now()
@@ -100,13 +100,6 @@ def time_booking():
   
   except Exception as e:
     return jsonify({"error": str(e), "success": False})
-
-@app.route('/proxy/test', methods=['POST'])
-def test():
-  json = {
-    "time": datetime.now().isoformat()[:-3]+"Z"
-  }
-  return jsonify(json)
 
 
 if __name__ == '__main__':
