@@ -100,7 +100,7 @@
       $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte fliken`);
       
       // Säger till backend att boka några sekunder tidigt för att bokningen ska ske så nära kl 08:00 som möjligt
-      await waitUntil(5, 59, 55);
+      await waitUntil(5, 59, 40);
       
       $('#status').html('Bokar rummet');
       $('#comment').html('Nu är det för sent för att avbryta processen');
