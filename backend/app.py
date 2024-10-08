@@ -84,16 +84,15 @@ def time_booking():
       "provider": "time_edit"
     }
 
-    while datetime.now().time().hour < 6:
-      #t.sleep(0.01)
-      pass
+    send_time = datetime.now().time()
+    while send_time.hour < 6:
+      send_time = datetime.now().time()
 
-    send_time = datetime.now()
     response = rq.post(url, json=payload, headers=headers)
 
     try:
       return_json = response.json()
-      return_json["timeMicSec"] = send_time.time().microsecond # Exakt sålänge det skickas inom 1 sekund
+      return_json["timeMicSec"] = send_time.microsecond # Exakt sålänge det skickas inom 1 sekund
       return jsonify(return_json)
     except:
       return jsonify({"error": response.text, "success": False})
