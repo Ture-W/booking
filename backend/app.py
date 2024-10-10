@@ -100,6 +100,13 @@ def time_booking():
   except Exception as e:
     return jsonify({"error": str(e), "success": False})
 
-
-if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=10000)
+@app.route('/proxy/test', methods=['POST'])
+def time_booking():
+  start = datetime.now()
+  t.sleep(15)
+  end = datetime.now()
+  resp = {
+    "start": start.isoformat(),
+    "end": end.isoformat()
+  }
+  return jsonify(resp)
