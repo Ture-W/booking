@@ -103,7 +103,8 @@ def time_booking():
 @app.route('/proxy/test', methods=['POST'])
 def test():
   start = datetime.now()
-  t.sleep(15)
+  while datetime.now().time().second < start.time().second + 20:
+    pass
   end = datetime.now()
   resp = {
     "start": start.isoformat(),
