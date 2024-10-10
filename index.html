@@ -110,7 +110,7 @@
       if (booking.success) {
         $('#status-icon').attr('class', 'fa-solid fa-check green');
         $('#status').html('Rummet blev bokat');
-        const formattedBookTime = Math.floor(booking.timeMicSec/100)/10;
+        const formattedBookTime = Math.floor(booking.timeMicSec/10)/100;
         $('#comment').html(`Bokningsförfrågan skickades ca. <b>${formattedBookTime} millisekunder</b> efter kl. 08:00.<br>(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)`);
       } else {
         const errorMessage = parseBookingError(booking.error);
