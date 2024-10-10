@@ -101,7 +101,7 @@ def time_booking():
     return jsonify({"error": str(e), "success": False})
 
 @app.route('/proxy/test', methods=['POST'])
-def time_booking():
+def test():
   start = datetime.now()
   t.sleep(15)
   end = datetime.now()
