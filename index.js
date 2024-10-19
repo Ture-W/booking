@@ -2,19 +2,6 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function waitUntil(hour, minute, second = 0) {
-  while (true) {
-    const now = new Date();
-    const currentHour = now.getUTCHours();
-    const currentMinute = now.getUTCMinutes();
-    const currentSecond = now.getUTCSeconds();
-    if (currentHour > hour || (currentHour === hour && currentMinute > minute) || (currentHour === hour && currentMinute === minute && currentSecond >= second)) {
-      break;
-    }
-    await sleep(20000);
-  }
-}
-
 async function getPoi(name) {
   const url = "https://search.mazemap.com/search/equery/";
   const headers = {
@@ -43,7 +30,7 @@ async function getPoi(name) {
 }
 
 async function getToken(hhUsername, hhPassword) {
-  const url = "https://booking-tp6b.onrender.com/proxy/token";
+  const url = "https://booking-tp6b.onrender.com/proxy/token"; // se app.py (och README.md)
   const headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -74,20 +61,28 @@ async function getToken(hhUsername, hhPassword) {
 }
 
 async function bookRoom(poiId, startHour, startMinute, duration, token) {
-  const url = "https://booking-tp6b.onrender.com/proxy/book";
+  let bookingTime = new Date((new Date()).setUTCHours(startHour - 2, startMinute, 0, 0)); // -2 timmar för tidzon offset
+  const start = bookingTime.toISOString();
+  bookingTime.setUTCMinutes(bookingTime.getUTCMinutes()+duration)
+  const end = bookingTime.toISOString();
+
+  const url = "https://booking.mazemap.com/api/roombooking/bookroom/";
   const headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   };
   const params = {
-    "action": "book",
-    "poiId": poiId,
-    "startHour": startHour,
-    "startMinute": startMinute,
-    "duration": duration,
-    "token": token
+    "poiid": poiId,
+    "token": token,
+    "start": start,
+    "end": end,
+    "provider": "time_edit"
   };
 
+  let now = new Date();
+  while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 50)) { await sleep(5000); now = new Date(); }
+  while (now.getUTCHours() < 6) { now = new Date(); }
+  
   try {
     const response = await $.ajax({
       url: url,
@@ -95,8 +90,9 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
       headers: headers,
       data: JSON.stringify(params)
     });
-
-    return response
+    
+    if (response.success || response.error) { return response; }
+    return {"error": response, "success": false};
 
   } catch (error) {
     console.error('Fel uppstod i bookRoom:', error);
@@ -111,7 +107,7 @@ function parseBookingError(errorText) {
     case "not_allowed_interval":
       return "Den valda tid för bokningen eller tidlängden är inte tillåten för detta rummet.";
     case "time_quota_exceeded":
-      return "Du har redan ett eller flera bokade rum för totalt 2 timmar.";
+      return "Du har redan andra bokningar just nu.";
     default:
       return "Okänt fel.";
   }

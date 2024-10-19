@@ -1,8 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from datetime import datetime, time, timedelta
 import requests as rq
-import time as t
 import urllib
 
 
@@ -35,7 +33,7 @@ def get_token():
 
       cookies = s.cookies.get_dict()
       if not ("shib_idp_session" in cookies and "shib_idp_session_ss" in cookies):
-        return jsonify({"error": "HH login failed"})
+        return jsonify({"error": "Kunde inte logga in i HH"})
 
       url = "https://cloud.timeedit.net/hh/web/timeedit/ssoResponse/hh_saml2"
       start = response.text.find('lue="')+5
@@ -53,49 +51,3 @@ def get_token():
     
   except Exception as e:
     return jsonify({"error": str(e)})
-
-@app.route('/proxy/book', methods=['POST'])
-def time_booking():
-  try:
-    now = datetime.now().time()
-    if not (now.hour == 6 and now.minute == 0) and not (now.hour == 5 and now.minute == 59):
-      return jsonify({"error": "Bokar bara klockan 08:00. Det kanske är för många som använder tjänsten.", "success": False})
-    
-    data = request.get_json()
-    poi_id = data.get('poiId')
-    start_hour = data.get('startHour')
-    start_minute = data.get('startMinute')
-    duration = data.get('duration')
-    token = data.get('token')
-
-    url = "https://booking.mazemap.com/api/roombooking/bookroom/"
-    headers = {
-      'Content-type':'application/json',
-      'Accept':'application/json'
-    }
-    booking_time = datetime.combine(datetime.now().date(), time(start_hour, start_minute)) - timedelta(hours=2) #-2 timmar för timezone offset
-    start = booking_time.isoformat()[:-3]+"Z"
-    end = (booking_time+timedelta(minutes=duration)).isoformat()[:-3]+"Z"
-    payload = {
-      "poiid": poi_id,
-      "token": token,
-      "start": start,
-      "end": end,
-      "provider": "time_edit"
-    }
-
-    send_time = datetime.now().time()
-    while send_time.hour < 6:
-      send_time = datetime.now().time()
-
-    response = rq.post(url, json=payload, headers=headers)
-
-    try:
-      return_json = response.json()
-      return_json["timeMicSec"] = send_time.microsecond + 1000000*send_time.second  # Exakt sålänge det skickas inom 1 minut från 08:00
-      return jsonify(return_json)
-    except:
-      return jsonify({"error": response.text, "success": False})
-  
-  except Exception as e:
-    return jsonify({"error": str(e), "success": False})

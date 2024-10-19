@@ -24,11 +24,11 @@
       <label for="room-name">Namn på rummet:</label><br>
       <input class="text-input input-field" type="text" id="room-name" placeholder="s1016" required><br>
 
-      <label for="start-hour">Tid att boka (timme:minut):</label>
+      <label for="start-hour">Tid att boka:</label>
       <div id="time-input">
         <input class="input-field" type="number" id="start-hour" placeholder="13" min="0" max="23" required>
-        <span>:</span>
-        <input class="input-field" type="number" id="start-minute" placeholder="0" min="0" max="59" required>
+        <span><strong>:</strong></span>
+        <input class="input-field" type="number" id="start-minute" placeholder="00" min="0" max="59" required>
       </div>
 
       <label>Tidslängd:</label><br>
@@ -73,45 +73,32 @@
       roomName = poiSearch[0]
       const poiId = poiSearch[1];
 
-      $('#status').html('Väntar tills kl. 08:00');
-      $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte fliken`);
+      const bookingInfo = `(${roomName}, ${String(startHour).padStart(2, '0')}:${String(startMinute).padStart(2, '0')}, ${duration} minuter)`
 
-      const now = new Date();
-      if (now.getUTCHours() >= 6) {
-        // Sov till nästa dag
-        await waitUntil(23, 59, 40);
-        await sleep(25000)
-      }
-      
-      await waitUntil(5, 52);
-      
-      // Detta väcker upp Render web servicen, tidigast 8 minuter innan bokning för bra marginal
-      // Den "somnar" om den inte får requests ofta, det kan ta 50+ sekunder att väcka den
+      $('#status').html('Väntar tills kl. 08:00');
+      $('#comment').html(`${bookingInfo}<br>Stäng inte fliken`);
+
+      let now = new Date();
+      if (now.getUTCHours() != 5 || now.getUTCMinutes() < 55) { await sleep(60000); now = new Date(); }
+
+      // Detta väcker upp Render web servicen, det kan ta 50+ sekunder så det görs lite tidigare
+      // Den "somnar" om den inte får requests ofta. Det är väll så Render kan hosta sånt gratis
       $('#status').html('Hämtar access token');
       const token = await getToken(hhUsername, hhPassword);
       if (!token) {
         $('#status-icon').attr('class', 'fa-solid fa-xmark red');
         $('#status').html('Något gick fel');
-        $('#comment').html('Fell uppstod under verifiering av inloggningsuppgifter. Kontrollera HH inloggningsuppgifterna.');
+        $('#comment').html('Fell uppstod under validering av inloggningsuppgifter. Kontrollera HH inloggningsuppgifterna.');
         return;
       }
-
       $('#status').html('Väntar tills kl. 08:00');
-      $('#comment').html(`(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)<br>Stäng inte fliken`);
-      
-      // Säger till backend att boka några sekunder tidigt för att bokningen ska ske så nära kl 08:00 som möjligt
-      await waitUntil(5, 59, 40);
-      
-      $('#status').html('Bokar rummet');
-      $('#comment').html('Nu är det för sent för att avbryta processen');
 
       const booking = await bookRoom(poiId, startHour, startMinute, duration, token);
 
       if (booking.success) {
         $('#status-icon').attr('class', 'fa-solid fa-check green');
         $('#status').html('Rummet blev bokat');
-        const formattedBookTime = Math.floor(booking.timeMicSec/10)/100;
-        $('#comment').html(`Bokningsförfrågan skickades ca. <b>${formattedBookTime} millisekunder</b> efter kl. 08:00.<br>(${roomName}, ${startHour}:${startMinute}, ${duration} minuter)`);
+        $('#comment').html(bookingInfo);
       } else {
         const errorMessage = parseBookingError(booking.error);
         $('#status-icon').attr('class', 'fa-solid fa-xmark red');
@@ -125,12 +112,15 @@
     $(document).ready(function() {
 
       $('#start-hour').on('input', function() {
-        if ($(this).val().length == 2) { $('#start-minute').focus(); }
-        else if ($(this).val().length > 2) { $(this).val($(this).val().substring(0, 2)); }
+        let number = String(parseInt($(this).val()));
+        if (number.length > 2) { number = number.substring(0, 2); $('#start-minute').focus(); }
+        else if (number.length == 2) { $('#start-minute').focus(); }
+        $(this).val(number.padStart(2, '0'));
       });
       $('#start-minute').on('input', function() {
-        if ($(this).val().length == 0) { $('#start-hour').focus(); }
-        else if ($(this).val().length > 2) { $(this).val($(this).val().substring(0, 2)); }
+        let number = String(parseInt($(this).val()));
+        if (number.length > 2) { number = number.substring(0, 2); }
+        $(this).val(number.padStart(2, '0'));
       });
 
       $('#booking-form').on('submit', function(event) {

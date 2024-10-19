@@ -5,7 +5,7 @@ import urllib
 
 booking_start = time(10, 15) # timme, minut
 duration = timedelta(hours=2)
-room_name = "s1016" # namnet som scriptet använder för att söka på mazemap. Den tar det översta resultatet så det behöver inte vara exakt (såvida du inte skriver in ett annat rum)
+room_name = "s1016" # namnet som scriptet använder för att söka på mazemap. Den tar det översta resultatet så det behöver inte vara exakt
 
 hh_username = ""  # DITT HH ANVÄNDARNAMN SÄTTER DU IN HÄR
 hh_password = ""  # DITT HH LÖSENORD SÄTTER DU IN HÄR
