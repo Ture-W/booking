@@ -60,7 +60,7 @@ async function getToken(hhUsername, hhPassword) {
   }
 }
 
-async function bookRoom(poiId, startHour, startMinute, duration, token) {
+function bookRoom(poiId, startHour, startMinute, duration, token) {
   let bookingTime = new Date((new Date()).setUTCHours(startHour - 2, startMinute, 0, 0)); // -2 timmar för tidzon offset
   const start = bookingTime.toISOString();
   bookingTime.setUTCMinutes(bookingTime.getUTCMinutes()+duration)
@@ -79,25 +79,45 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
     "provider": "time_edit"
   };
 
-  let now = new Date();
-  while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 50)) { await sleep(5000); now = new Date(); }
-  while (now.getUTCHours() < 6) { now = new Date(); }
-  
-  try {
-    const response = await $.ajax({
-      url: url,
-      method: 'POST',
-      headers: headers,
-      data: JSON.stringify(params)
-    });
-    
-    if (response.success || response.error) { return response; }
-    return {"error": response, "success": false};
+  let done = false;
+  let response = null;
+  let count = 0;
+  const requestDict = {
+    url: url,
+    method: 'POST',
+    headers: headers,
+    data: JSON.stringify(params),
+    success: function(resp) {
+      count++;
+      if (done) return;
+      response = resp;
+      if ((resp.success || (resp.error && resp.error != "not_allowed_interval"))) done = true;
+    },
+    error: function(error) {
+      count++;
+      console.error('Fel uppstod i bookRoom:', error);
+      done = true;
+      response = null;
+    }
+  };
 
-  } catch (error) {
-    console.error('Fel uppstod i bookRoom:', error);
-    return null;
+  let now = new Date();
+  while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 50)) { sleep(5000); now = new Date(); }
+  while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 59)) { now = new Date(); }
+
+  for (let i = 0; i < 18; i++)
+  {
+    setTimeout(function() {
+      if (!done) {
+        $.ajax(requestDict);
+      }
+    }, i * 111);
   }
+
+  while (count != 18 && (new Date()) - now < 10000) sleep(200);
+
+  if (response.success || response.error) return response;
+  return {"error": response, "success": false};
 }
 
 function parseBookingError(errorText) {

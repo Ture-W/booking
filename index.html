@@ -93,7 +93,7 @@
       }
       $('#status').html('Väntar tills kl. 08:00');
 
-      const booking = await bookRoom(poiId, startHour, startMinute, duration, token);
+      const booking = bookRoom(poiId, startHour, startMinute, duration, token);
 
       if (booking.success) {
         $('#status-icon').attr('class', 'fa-solid fa-check green');
