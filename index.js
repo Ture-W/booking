@@ -60,7 +60,7 @@ async function getToken(hhUsername, hhPassword) {
   }
 }
 
-function bookRoom(poiId, startHour, startMinute, duration, token) {
+async function bookRoom(poiId, startHour, startMinute, duration, token) {
   let bookingTime = new Date((new Date()).setUTCHours(startHour - 2, startMinute, 0, 0)); // -2 timmar för tidzon offset
   const start = bookingTime.toISOString();
   bookingTime.setUTCMinutes(bookingTime.getUTCMinutes()+duration)
@@ -102,7 +102,7 @@ function bookRoom(poiId, startHour, startMinute, duration, token) {
   };
 
   let now = new Date();
-  while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 50)) { sleep(5000); now = new Date(); }
+  while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 50)) { await sleep(5000); now = new Date(); }
   while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 59)) { now = new Date(); }
 
   for (let i = 0; i < 18; i++)
@@ -114,7 +114,7 @@ function bookRoom(poiId, startHour, startMinute, duration, token) {
     }, i * 111);
   }
 
-  while (count != 18 && (new Date()) - now < 10000) sleep(200);
+  while (count != 18 && (new Date()) - now < 10000) await sleep(200);
 
   if (response.success || response.error) return response;
   return {"error": response, "success": false};
