@@ -80,10 +80,13 @@
       $('#comment').html(`${bookingInfo}<br>Stäng inte fliken`);
 
       let now = new Date();
-      if (now.getUTCHours() != 5 || now.getUTCMinutes() < 55) { await sleep(60000); now = new Date(); }
+      while (now.getUTCHours() != 5 || now.getUTCMinutes() < 55) {
+        await sleep(60000);
+        now = new Date();
+      }
 
       // Detta väcker upp Render web servicen, det kan ta 50+ sekunder så det görs lite tidigare
-      // Den "somnar" om den inte får requests ofta. Det är väll så Render kan hosta sånt gratis
+      // Den "somnar" om den inte får requests på ett tag. Det är väll så Render kan hosta sånt gratis
       $('#status').html('Hämtar access token');
       const token = await getToken(hhUsername, hhPassword);
       if (!token) {
