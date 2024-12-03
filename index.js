@@ -11,7 +11,8 @@ async function getPoi(name) {
   const params = {
     "q": name,
     "rows": 1,
-    "withpois": true
+    "withpois": true,
+    "campusid": 278
   };
   
   try {
@@ -103,18 +104,38 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
 
   let now = new Date();
   while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 50)) { await sleep(5000); now = new Date(); }
+  $.ajax(requestDict); // för att få preflight tid ur bilden
   while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 59)) { now = new Date(); }
 
-  for (let i = 0; i < 18; i++)
+  for (let i = 0; i < 9; i++)
   {
     setTimeout(function() {
-      if (!done) {
-        $.ajax(requestDict);
-      }
-    }, i * 111);
+      if (!done) $.ajax(requestDict);
+    }, 900+i*10);
   }
 
-  while (count != 18 && (new Date()) - now < 10000) await sleep(200);
+  for (let i = 0; i < 5; i++)
+  {
+    setTimeout(function() {
+      if (!done) $.ajax(requestDict);
+    }, 650+i*50);
+  }
+
+  for (let i = 0; i < 6; i++)
+  {
+    setTimeout(function() {
+      if (!done) $.ajax(requestDict);
+    }, 1020+i*50);
+  }
+
+  for (let i = 0; i < 7; i++)
+  {
+    setTimeout(function() {
+      if (!done) $.ajax(requestDict);
+    }, i*100);
+  }
+
+  while (count != 27 && (new Date()) - now < 10000 && !done) await sleep(200);
 
   if (response.success || response.error) return response;
   return {"error": response, "success": false};

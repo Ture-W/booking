@@ -48,7 +48,7 @@
     <div id="output-container">
       <i id="status-icon" class="fa-solid fa-spinner fa-spin"></i><br>
       <h2 id="status">Väntar tills kl. 08:00</h2>
-      <p id="comment">Stäng inte fliken</p>
+      <p id="comment">Lämna inte fliken</p>
     </div>
   </div>
 
@@ -77,10 +77,10 @@
       const bookingInfo = `(${roomName}, ${String(startHour).padStart(2, '0')}:${String(startMinute).padStart(2, '0')}, ${duration} minuter)`
 
       $('#status').html('Väntar tills kl. 08:00');
-      $('#comment').html(`${bookingInfo}<br>Stäng inte fliken`);
+      $('#comment').html(`${bookingInfo}<br>Lämna inte fliken`);
 
       let now = new Date();
-      while (now.getUTCHours() != 5 || now.getUTCMinutes() < 55) {
+      while (now.getUTCHours() != 6 || now.getUTCMinutes() < 54) {
         await sleep(60000);
         now = new Date();
       }
@@ -92,7 +92,7 @@
       if (!token) {
         $('#status-icon').attr('class', 'fa-solid fa-xmark red');
         $('#status').html('Något gick fel');
-        $('#comment').html('Fell uppstod under validering av inloggningsuppgifter. Kontrollera HH inloggningsuppgifterna.');
+        $('#comment').html('Fel uppstod under validering av inloggningsuppgifter. Kontrollera HH inloggningsuppgifterna.');
         return;
       }
       $('#status').html('Väntar tills kl. 08:00');
