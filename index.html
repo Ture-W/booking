@@ -80,7 +80,7 @@
       $('#comment').html(`${bookingInfo}<br>Lämna inte fliken`);
 
       let now = new Date();
-      while (now.getUTCHours() != 6 || now.getUTCMinutes() < 54) {
+      while (now.getUTCHours() != 7-UTC_OFFSET || now.getUTCMinutes() < 54) {
         await sleep(60000);
         now = new Date();
       }

@@ -2,6 +2,8 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+UTC_OFFSET = 1;
+
 async function getPoi(name) {
   const url = "https://search.mazemap.com/search/equery/";
   const headers = {
@@ -62,7 +64,7 @@ async function getToken(hhUsername, hhPassword) {
 }
 
 async function bookRoom(poiId, startHour, startMinute, duration, token) {
-  let bookingTime = new Date((new Date()).setUTCHours(startHour - 2, startMinute, 0, 0)); // -2 timmar för tidzon offset
+  let bookingTime = new Date((new Date()).setUTCHours(startHour-UTC_OFFSET, startMinute, 0, 0));
   const start = bookingTime.toISOString();
   bookingTime.setUTCMinutes(bookingTime.getUTCMinutes()+duration)
   const end = bookingTime.toISOString();
@@ -107,32 +109,32 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
   $.ajax(requestDict); // för att få preflight tid ur bilden
   while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 58)) { now = new Date(); }
 
-  for (let i = 0; i < 9; i++)
+  for (let i = 0; i < 13; i++)
   {
     setTimeout(function() {
       if (!done) $.ajax(requestDict);
-    }, 900+i*10    +100);
-  }
-
-  for (let i = 0; i < 5; i++)
-  {
-    setTimeout(function() {
-      if (!done) $.ajax(requestDict);
-    }, 650+i*50    +100);
+    }, 1080+i*10);
   }
 
   for (let i = 0; i < 6; i++)
   {
     setTimeout(function() {
       if (!done) $.ajax(requestDict);
-    }, 1020+i*50    +100);
+    }, 1240+i*50);
   }
 
-  for (let i = 0; i < 7; i++)
+  for (let i = 0; i < 5; i++)
   {
     setTimeout(function() {
       if (!done) $.ajax(requestDict);
-    }, i*100    +100);
+    }, 840+i*50);
+  }
+
+  for (let i = 0; i < 3; i++)
+  {
+    setTimeout(function() {
+      if (!done) $.ajax(requestDict);
+    }, 1800+i*200);
   }
 
   while (count != 27 && (new Date()) - now < 10000 && !done) await sleep(200);
