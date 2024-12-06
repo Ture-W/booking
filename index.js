@@ -109,33 +109,33 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
   $.ajax(requestDict); // för att få preflight tid ur bilden
   while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 58)) { now = new Date(); }
 
-  for (let i = 0; i < 13; i++)
+  for (let i = 0; i < 25; i++)
   {
     setTimeout(function() {
       if (!done) $.ajax(requestDict);
-    }, 1080+i*10);
+    }, 900+i*16);
   }
 
-  for (let i = 0; i < 6; i++)
-  {
-    setTimeout(function() {
-      if (!done) $.ajax(requestDict);
-    }, 1240+i*50);
-  }
+  // for (let i = 0; i < 6; i++)
+  // {
+  //   setTimeout(function() {
+  //     if (!done) $.ajax(requestDict);
+  //   }, 1240+i*50);
+  // }
 
-  for (let i = 0; i < 5; i++)
-  {
-    setTimeout(function() {
-      if (!done) $.ajax(requestDict);
-    }, 840+i*50);
-  }
+  // for (let i = 0; i < 5; i++)
+  // {
+  //   setTimeout(function() {
+  //     if (!done) $.ajax(requestDict);
+  //   }, 840+i*50);
+  // }
 
-  for (let i = 0; i < 3; i++)
-  {
-    setTimeout(function() {
-      if (!done) $.ajax(requestDict);
-    }, 1800+i*200);
-  }
+  // for (let i = 0; i < 3; i++)
+  // {
+  //   setTimeout(function() {
+  //     if (!done) $.ajax(requestDict);
+  //   }, 1800+i*200);
+  // }
 
   while (count != 27 && (new Date()) - now < 10000 && !done) await sleep(200);
 
