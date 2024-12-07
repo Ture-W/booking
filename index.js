@@ -105,15 +105,15 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
   };
 
   let now = new Date();
-  while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 49)) { await sleep(5000); now = new Date(); }
+  while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 50)) { await sleep(5000); now = new Date(); }
   $.ajax(requestDict); // för att få preflight tid ur bilden
-  while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 58)) { now = new Date(); }
+  while (now.getUTCMinutes() < 59 || (now.getUTCMinutes() == 59 && now.getUTCSeconds() < 59)) { now = new Date(); }
 
   for (let i = 0; i < 25; i++)
   {
     setTimeout(function() {
       if (!done) $.ajax(requestDict);
-    }, 900+i*16);
+    }, i*16);
   }
 
   // for (let i = 0; i < 6; i++)
