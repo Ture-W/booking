@@ -94,7 +94,8 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
       count++;
       if (done) return;
       response = resp;
-      if ((resp.success || (resp.error && resp.error != "not_allowed_interval"))) done = true;
+      //if ((resp.success || (resp.error && resp.error != "not_allowed_interval"))) done = true;
+      if ((resp.success || (resp.error && resp.error != "not_allowed_interval" && resp.error != "time_quota_exceeded"))) done = true;
     },
     error: function(error) {
       count++;
@@ -113,7 +114,7 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
   {
     setTimeout(function() {
       if (!done) $.ajax(requestDict);
-    }, i*16);
+    }, 100+i*16);
   }
 
   // for (let i = 0; i < 6; i++)
