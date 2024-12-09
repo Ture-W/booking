@@ -84,21 +84,24 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
 
   let done = false;
   let response = null;
-  let count = 0;
   const requestDict = {
     url: url,
     method: 'POST',
     headers: headers,
+    timeout: 8,
+    data: JSON.stringify(params)
+  };
+  const requestDictFinal = {
+    url: url,
+    method: 'POST',
+    headers: headers,
+    timeout: 6000,
     data: JSON.stringify(params),
     success: function(resp) {
-      count++;
-      if (done) return;
+      done = true;
       response = resp;
-      //if ((resp.success || (resp.error && resp.error != "not_allowed_interval"))) done = true;
-      if ((resp.success || (resp.error && resp.error != "not_allowed_interval" && resp.error != "time_quota_exceeded"))) done = true;
     },
     error: function(error) {
-      count++;
       console.error('Fel uppstod i bookRoom:', error);
       done = true;
       response = null;
@@ -113,32 +116,15 @@ async function bookRoom(poiId, startHour, startMinute, duration, token) {
   for (let i = 0; i < 25; i++)
   {
     setTimeout(function() {
-      if (!done) $.ajax(requestDict);
+      $.ajax(requestDict);
     }, 100+i*16);
   }
 
-  // for (let i = 0; i < 6; i++)
-  // {
-  //   setTimeout(function() {
-  //     if (!done) $.ajax(requestDict);
-  //   }, 1240+i*50);
-  // }
+  setTimeout(function() {
+    $.ajax(requestDictFinal);
+  }, 700);
 
-  // for (let i = 0; i < 5; i++)
-  // {
-  //   setTimeout(function() {
-  //     if (!done) $.ajax(requestDict);
-  //   }, 840+i*50);
-  // }
-
-  // for (let i = 0; i < 3; i++)
-  // {
-  //   setTimeout(function() {
-  //     if (!done) $.ajax(requestDict);
-  //   }, 1800+i*200);
-  // }
-
-  while (count != 27 && (new Date()) - now < 10000 && !done) await sleep(200);
+  while ((new Date()) - now < 5000 && !done) await sleep(200);
 
   if (response.success || response.error) return response;
   return {"error": response, "success": false};
